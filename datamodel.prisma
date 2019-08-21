@@ -1,0 +1,109 @@
+type User { 
+  id: ID! @id
+  name: String!
+  email: String! @unique
+  password: String!
+  addresses: [Address]
+  cart: Cart
+  addnInfo: AddInfo
+  orders: [Order]
+}
+
+type Address{
+  id: ID! @id
+  name: String!
+  line1: String!
+  line2: String
+  district: String
+  state: String
+  pincode: String
+  user : User @relation(link: INLINE)
+}
+
+type Supplier{
+  id: ID! @id
+  code: String!
+  name: String!
+  gstin: String
+
+}
+
+type Company{
+  id: ID!@id
+  name: String!
+}
+
+type Product{
+  id: ID! @id
+  code: String!
+  name: String!
+  imageuri: String
+  category: Category!
+  tags: [Tag]
+  hsn: String
+  variants: [Variant!]!
+  supplier: Supplier!
+  company: Company!
+}
+
+type Variant{
+  id: ID! @id
+  name: String!
+  price: Int
+  pRate: Float
+  taxType: Float
+  stock: Int
+  product: Product @relation(link: INLINE)
+}
+
+type Category{
+  id: ID! @id
+  name: String!
+}
+
+type Tag{
+  id: ID! @id
+  name: String!
+  search: String!
+}
+
+type Cart{
+  id: ID! @id
+  items: [CartItem]!
+  user: User! @relation(link: INLINE)
+}
+
+type CartItem{
+  id: ID! @id
+  cart: Cart! @relation(link: INLINE)
+  product : Product!
+  variant: Variant! @relation(link: INLINE)
+  quantity: Int! @default(value: 1)
+}
+
+type Order{
+  id: ID! @id
+  user: User! @relation(link: INLINE)
+  delivered: Boolean! @default(value: false)
+  items: [CartItem]!
+  amount: Int!
+  orderDate: DateTime!
+  deliverDate: DateTime
+  eta: DateTime
+  payment: Payment! @relation(link: INLINE)
+}
+
+type Payment{
+  id: ID! @id
+  user: User! @relation(link: INLINE)
+  order: Order! 
+  modeOfPayment: String!
+  payed: Boolean! @default(value: false)
+  amount : Int!
+}
+
+type AddInfo{
+  id: ID! @id
+  user: User! @relation(link: INLINE)
+  nickName: String! @default(value: "Dude")
+}
