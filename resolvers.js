@@ -51,6 +51,9 @@ const resolvers = {
     getCart: async (_, __, { user }) => {
       // console.log(user)
       return prisma.user({ email: user.email }).cart()
+    },
+    orders: async (_, __, { user }) => {
+      return prisma.user({ id: user.id }).orders();
     }
   },
   Mutation: {
@@ -154,8 +157,54 @@ const resolvers = {
           id: cartItemId
         }
       })
-    }
+    },
+    createOrder: async (_, { input }, { user }) => {
+      if (!user) return;
+      const { itemID, address, paymentType } = input;
+      // Get items from the cart and check if those belong to the user
+      console.log("Item ID display:", itemID)
+      const items = prisma.cartItems({ where: { id_in: itemID } });
+      let amount = 0;
+      console.log(items);
+      items.forEach((item) => {
+        amount += item.quantity * item.variant.price
+      });
+      const order = await prisma.createOrder({
+        amount,
+        deliverDate: 'fake-date',
+        delivered: false,
+        items: {
+          connect: [
+            items.map(item => (item.quantity > 0 ? { id: item.id } : {}))
+          ]
+        },
+        deliverTo: {
+          connect: {
+            id: address
+          }
+        },
+        payment: {
+          create: {
+            payed: paymentType == "COD" ? false : true,
+            modeOfPayment: paymentType,
+            user: {
+              connect: {
+                id: user.id
+              }
+            },
+            amount,
+          },
 
+        },
+        user: {
+          connect: {
+            id: user.id
+          }
+        },
+        orderDate: 'FAKE_DATE'
+      });
+      return order;
+    }
   },
   Product: {
     variants(parent, _, { prisma }) {
@@ -191,7 +240,7 @@ const resolvers = {
     variant({ id }) {
       return prisma.cartItem({ id }).variant();
     }
-  }
+  },
 }
 
 module.exports = resolvers;

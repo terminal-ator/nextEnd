@@ -14,6 +14,7 @@ const typeDefs = gql`
     allSuppliers: [Supplier]!
     allCategories: [Category]!
     getCart: Cart!
+    orders: [Order]!
   }
 
   type Mutation{
@@ -26,6 +27,13 @@ const typeDefs = gql`
     createCategory(input: normalizedStringInput): Category!
     removeFromCart( cartItemId: ID!):Cart!
     updateCartQuant( cartItemId: ID! , quantity: Int!): CartItem!
+    createOrder(input: CreateOrderInput!):Order!
+  }
+
+  input CreateOrderInput{
+    itemID: [ID]!
+    address: ID 
+    paymentType: String!
   }
 
   input normalizedStringInput{
