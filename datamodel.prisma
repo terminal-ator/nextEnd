@@ -91,6 +91,7 @@ type Order{
   deliverDate: DateTime
   eta: DateTime
   payment: Payment! @relation(link: INLINE)
+  deliverTo: Address!
 }
 
 type Payment{
