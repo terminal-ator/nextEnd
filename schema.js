@@ -42,6 +42,7 @@ const typeDefs = gql`
 		itemID: [ID]!
 		address: ID
 		paymentType: String!
+		shippingCost: Int!
 	}
 
 	input normalizedStringInput {
@@ -184,7 +185,7 @@ const typeDefs = gql`
 
 	type CartItem {
 		id: ID!
-		cart: Cart!
+		cart: Cart
 		product: Product!
 		variant: Variant!
 		quantity: Int!

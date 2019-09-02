@@ -631,7 +631,7 @@ type CartEdge {
 
 type CartItem {
   id: ID!
-  cart: Cart!
+  cart: Cart
   product: Product!
   variant: Variant!
   quantity: Int!
@@ -645,7 +645,7 @@ type CartItemConnection {
 
 input CartItemCreateInput {
   id: ID
-  cart: CartCreateOneWithoutItemsInput!
+  cart: CartCreateOneWithoutItemsInput
   product: ProductCreateOneInput!
   variant: VariantCreateOneInput!
   quantity: Int
@@ -732,14 +732,14 @@ input CartItemSubscriptionWhereInput {
 }
 
 input CartItemUpdateDataInput {
-  cart: CartUpdateOneRequiredWithoutItemsInput
+  cart: CartUpdateOneWithoutItemsInput
   product: ProductUpdateOneRequiredInput
   variant: VariantUpdateOneRequiredInput
   quantity: Int
 }
 
 input CartItemUpdateInput {
-  cart: CartUpdateOneRequiredWithoutItemsInput
+  cart: CartUpdateOneWithoutItemsInput
   product: ProductUpdateOneRequiredInput
   variant: VariantUpdateOneRequiredInput
   quantity: Int
@@ -877,10 +877,12 @@ input CartUpdateInput {
   user: UserUpdateOneRequiredWithoutCartInput
 }
 
-input CartUpdateOneRequiredWithoutItemsInput {
+input CartUpdateOneWithoutItemsInput {
   create: CartCreateWithoutItemsInput
   update: CartUpdateWithoutItemsDataInput
   upsert: CartUpsertWithoutItemsInput
+  delete: Boolean
+  disconnect: Boolean
   connect: CartWhereUniqueInput
 }
 

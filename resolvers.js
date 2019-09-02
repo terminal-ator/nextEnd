@@ -1,5 +1,5 @@
 const { prisma } = require('./generated/prisma-client');
-const { paginateResults } = require('./utils');
+const { paginateResults, createOrder } = require('./utils');
 const { createNewUser, createNewSupplier, createNewCategory, createNewCompany } = require('./db-ops');
 
 const resolvers = {
@@ -51,7 +51,7 @@ const resolvers = {
 			return prisma.user({ email: user.email }).cart();
 		},
 		orders: async (_, __, { user }) => {
-			return prisma.user({ id: user.id }).orders();
+			return prisma.user({ id: user.id }).orders({ orderBy: 'orderDate_DESC' });
 		},
 		address: async (_, __, { user }) => {
 			return prisma.user({ id: user.id }).addresses();
@@ -160,80 +160,7 @@ const resolvers = {
 			});
 		},
 		createOrder: async (_, { input }, { user }) => {
-			if (!user) return;
-			const { itemID, address, paymentType } = input;
-			// Get items from the cart and check if those belong to the user
-			console.log('Item ID display:', itemID);
-			const fragment = `
-        fragment cartItemWithVariant on CartItem{
-          id
-          quantity
-          variant{
-            price
-          }
-        }
-      `;
-			const orderFragment = `
-       fragment withItemsInOrder on Order{
-         id
-         orderDate
-         delivered
-         amount
-         eta
-         deliverDate
-         items{
-           id
-           variant{
-             id
-           }
-           quantity
-         }
-       }
-      `;
-			const items = await prisma.cartItems({ where: { id_in: itemID } }).$fragment(fragment);
-			let amount = 0;
-			console.log(items);
-			items.forEach(item => {
-				amount += item.quantity * item.variant.price;
-			});
-			const order = await prisma
-				.createOrder({
-					amount,
-					deliverDate: '2019-02-04',
-					delivered: false,
-					items: {
-						connect: items.map(item => ({
-							id: item.id
-						}))
-					},
-					deliverTo: {
-						connect: {
-							id: address
-						}
-					},
-					payment: {
-						create: {
-							payed: paymentType == 'COD' ? false : true,
-							modeOfPayment: paymentType,
-							user: {
-								connect: {
-									id: user.id
-								}
-							},
-							amount
-						}
-					},
-					orderDate: '2019-02-01',
-					user: {
-						connect: {
-							id: user.id
-						}
-					}
-				})
-				.$fragment(orderFragment);
-			console.log('The order is: ', order);
-
-			return prisma.order({ id: order.id });
+			return createOrder(input, user);
 			// return order;
 		},
 		addAddress: async (_, { input }, { user }) => {

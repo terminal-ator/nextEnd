@@ -75,7 +75,7 @@ type Cart{
 
 type CartItem{
   id: ID! @id
-  cart: Cart! @relation(link: INLINE)
+  cart: Cart @relation(link: INLINE)
   product : Product!
   variant: Variant! @relation(link: INLINE)
   quantity: Int! @default(value: 1)

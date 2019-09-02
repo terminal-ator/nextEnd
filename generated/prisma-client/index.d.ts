@@ -1636,7 +1636,7 @@ export interface CartItemCreateManyInput {
 
 export interface CartItemCreateInput {
   id?: Maybe<ID_Input>;
-  cart: CartCreateOneWithoutItemsInput;
+  cart?: Maybe<CartCreateOneWithoutItemsInput>;
   product: ProductCreateOneInput;
   variant: VariantCreateOneInput;
   quantity?: Maybe<Int>;
@@ -2410,16 +2410,18 @@ export interface CartItemUpdateWithWhereUniqueNestedInput {
 }
 
 export interface CartItemUpdateDataInput {
-  cart?: Maybe<CartUpdateOneRequiredWithoutItemsInput>;
+  cart?: Maybe<CartUpdateOneWithoutItemsInput>;
   product?: Maybe<ProductUpdateOneRequiredInput>;
   variant?: Maybe<VariantUpdateOneRequiredInput>;
   quantity?: Maybe<Int>;
 }
 
-export interface CartUpdateOneRequiredWithoutItemsInput {
+export interface CartUpdateOneWithoutItemsInput {
   create?: Maybe<CartCreateWithoutItemsInput>;
   update?: Maybe<CartUpdateWithoutItemsDataInput>;
   upsert?: Maybe<CartUpsertWithoutItemsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
   connect?: Maybe<CartWhereUniqueInput>;
 }
 
@@ -2676,7 +2678,7 @@ export interface CartUpdateInput {
 }
 
 export interface CartItemUpdateInput {
-  cart?: Maybe<CartUpdateOneRequiredWithoutItemsInput>;
+  cart?: Maybe<CartUpdateOneWithoutItemsInput>;
   product?: Maybe<ProductUpdateOneRequiredInput>;
   variant?: Maybe<VariantUpdateOneRequiredInput>;
   quantity?: Maybe<Int>;
